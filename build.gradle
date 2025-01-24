@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id "io.freefair.lombok" version "8.1.0" // lombok 플러스인 추가
+}
+
+group = 'com'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA 사용
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // Validation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0' // Swagger
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // QueryDSL
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    runtimeOnly 'com.h2database:h2' // H2 데이터베이스
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:5.0.0' // 서블릿 API 추가
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
