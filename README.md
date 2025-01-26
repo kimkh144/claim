@@ -84,6 +84,7 @@ cd claim
   │               │       │   └── Impl                     # 커스텀 repository 구현체 관리
   │               │       └── service                      # 서비스 layer (비즈니스 기능)
   │               └── global                               # 전역 설정 기능     
+  │                   ├── aop                              # Application cache 기능 AOP 적용 (cache clear annotation)
   │                   ├── enums                            # 공통 enum class 관리 (ex : error-code)
   │                   ├── common                           
   │                   │   ├── exception                    # 커스텀 exception 처리 관리
@@ -198,105 +199,108 @@ cd claim
 ---
 
 ## 구현 기능
+- `Application level` 의 `2차 캐시(ehcache)`를 활용하여 상품/카테고리 기초 데이터 정보 변경 전 까지는 `캐시 스토어 정보` 활용 및 상품/카테고리 기초 데이터 변경시 `캐시 clear.`  
 - **구현 1)** [카테고리 별 최저가격 브랜드와 상품 가격, 총액을 조회하는 API](http://localhost:8080/swagger-ui/index.html#/%EC%83%81%ED%92%88%20-%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC/category)
+  - `Application level 의 2차 캐시 (ehcache) 적용.`
   - API
-    ```text
-      api endpoint : /v1/products/categories/lowest-price/brands (GET)
-      api endpoint 설명 : 
-       - /v1: API 버전
-       - /products: 상품 도메인.
-       - /categories: 카테고리 기능
-       - /lowest-price: 가장 저렴한 가격.
-       - /brands: 브랜드를 기준으로 필터링된 결과를 제공할수 있도록 확장. 
-    ```
+   ```text
+     api endpoint : /v1/products/categories/lowest-price/brands (GET)
+     api endpoint 설명 : 
+      - /v1: API 버전
+      - /products: 상품 도메인.
+      - /categories: 카테고리 기능
+      - /lowest-price: 가장 저렴한 가격.
+      - /brands: 브랜드를 기준으로 필터링된 결과를 제공할수 있도록 확장. 
+   ```
 
   - 카테고리 별 최저가 브랜드 조회 (SQL)
-    ```sql
-      #native sql 활용 
-      SELECT 
-        TB_PRODUCT_BRAND_CATEGORY_RANKED.CATEGORY, 
-        TB_PRODUCT_BRAND_CATEGORY_RANKED.BRAND, 
-        TB_PRODUCT_BRAND_CATEGORY_RANKED.PRICE
-      FROM (
-          SELECT
-          PBC.CATEGORY,
-          PBC.BRAND,
-          PBC.PRICE,
-          ROW_NUMBER() OVER (PARTITION BY PBC.CATEGORY ORDER BY PBC.PRICE ASC, PBC.BRAND ASC) AS ROW_NUM
-          FROM
-          TB_PRODUCT_BRAND_CATEGORY PBC
-      ) AS TB_PRODUCT_BRAND_CATEGORY_RANKED
-      WHERE TB_PRODUCT_BRAND_CATEGORY_RANKED.ROW_NUM = 1
-    ```
+   ```sql
+     #native sql 활용 
+     SELECT 
+       TB_PRODUCT_BRAND_CATEGORY_RANKED.CATEGORY, 
+       TB_PRODUCT_BRAND_CATEGORY_RANKED.BRAND, 
+       TB_PRODUCT_BRAND_CATEGORY_RANKED.PRICE
+     FROM (
+         SELECT
+         PBC.CATEGORY,
+         PBC.BRAND,
+         PBC.PRICE,
+         ROW_NUMBER() OVER (PARTITION BY PBC.CATEGORY ORDER BY PBC.PRICE ASC, PBC.BRAND ASC) AS ROW_NUM
+         FROM
+         TB_PRODUCT_BRAND_CATEGORY PBC
+     ) AS TB_PRODUCT_BRAND_CATEGORY_RANKED
+     WHERE TB_PRODUCT_BRAND_CATEGORY_RANKED.ROW_NUM = 1
+   ```
   - 카테고리 별 최저가 브랜드 조회 설명
-    - TB_PRODUCT_BRAND_CATEGORY 테이블에서 카테고리, 브랜드, 가격 항목을 선택.
-    - ROW_NUMBER(): 윈도우 함수를 사용해 각 카테고리 내에서 가격을 기준으로 오름차순 정렬하여 번호 채번.
-      (가격 기준으로 오름차순 정렬하여 가장 낮은 가격이 1번 부여됨.
-      가격이 동일한 경우, BRAND 오름차순으로 정렬하여 순위를 매깁니다.
-      이 결과, 각 카테고리별로 ROW_NUM = 1인 행이 최저 가격의 브랜드.
-    - code level 에서 상수로 정의 된 카테고리 노출 순서로 steram().sorted 카테고리 정렬.
-    - 조회된 상품 가격의 총합을 sum.(code level) 총액 제공.
-    - Dto 구성시 가격 정보 String cast 및 콤마 (,) 삽입 후 응답 제공
+   - TB_PRODUCT_BRAND_CATEGORY 테이블에서 카테고리, 브랜드, 가격 항목을 선택.
+   - ROW_NUMBER(): 윈도우 함수를 사용해 각 카테고리 내에서 가격을 기준으로 오름차순 정렬하여 번호 채번.
+     (가격 기준으로 오름차순 정렬하여 가장 낮은 가격이 1번 부여됨.
+     가격이 동일한 경우, BRAND 오름차순으로 정렬하여 순위를 매깁니다.
+     이 결과, 각 카테고리별로 ROW_NUM = 1인 행이 최저 가격의 브랜드.
+   - code level 에서 상수로 정의 된 카테고리 노출 순서로 steram().sorted 카테고리 정렬.
+   - 조회된 상품 가격의 총합을 sum.(code level) 총액 제공.
+   - Dto 구성시 가격 정보 String cast 및 콤마 (,) 삽입 후 응답 제공
 
   - 요청 및 응답
-    - 정상 응답 : `HTTP/1.1 200 OK`
-    - 정상 응답의 경우 data 항목으로 제공 됨.
-    ```text
-    # 요청 Curl
-    curl -X 'GET' \
-    'http://localhost:8080/v1/products/categories/lowest-price/brands' -H 'accept: application/json'
+   - 정상 응답 : `HTTP/1.1 200 OK`
+   - 정상 응답의 경우 data 항목으로 제공 됨.
+   ```text
+   # 요청 Curl
+   curl -X 'GET' \
+   'http://localhost:8080/v1/products/categories/lowest-price/brands' -H 'accept: application/json'
 
-    #응답 body payload (Json)
-    {
-       "data": {
-           "products": [
-                {
-                    "brand": "C",
-                    "category": "상의",
-                    "price": "10,000"
-                },
-                {
-                     "brand": "E",
-                     "category": "아우터",
-                     "price": "5,000"
-                },
-                {
-                     "brand": "D",
-                     "category": "바지",
-                     "price": "3,000"
-                },
-                {
-                     "brand": "A",
-                     "category": "스니커즈",
-                     "price": "9,000"
-                },
-                {
-                     "brand": "A",
-                     "category": "가방",
-                     "price": "2,000"
-                },
-                {
-                     "brand": "D",
-                     "category": "모자",
-                     "price": "1,500"
-                },
-                {
-                     "brand": "I",
-                     "category": "양말",
-                     "price": "1,700"
-                },
-                {
-                     "brand": "F",
-                     "category": "액세서리",
-                     "price": "1,900"
-                }
-           ],
-           "totalPrice": "34,100"
-       }
-    }
+   #응답 body payload (Json)
+   {
+      "data": {
+          "products": [
+               {
+                   "brand": "C",
+                   "category": "상의",
+                   "price": "10,000"
+               },
+               {
+                    "brand": "E",
+                    "category": "아우터",
+                    "price": "5,000"
+               },
+               {
+                    "brand": "D",
+                    "category": "바지",
+                    "price": "3,000"
+               },
+               {
+                    "brand": "A",
+                    "category": "스니커즈",
+                    "price": "9,000"
+               },
+               {
+                    "brand": "A",
+                    "category": "가방",
+                    "price": "2,000"
+               },
+               {
+                    "brand": "D",
+                    "category": "모자",
+                    "price": "1,500"
+               },
+               {
+                    "brand": "I",
+                    "category": "양말",
+                    "price": "1,700"
+               },
+               {
+                    "brand": "F",
+                    "category": "액세서리",
+                    "price": "1,900"
+               }
+          ],
+          "totalPrice": "34,100"
+      }
+   }
             
 
 - **구현 2)** [단일 브랜드로 모든 카테고리 상품을 구매할 때 최저가격에 판매하는 브랜드와 카테고리의 상품가격, 총액을 조회하는 API](http://localhost:8080/swagger-ui/index.html#/%EC%83%81%ED%92%88%20-%20%EB%B8%8C%EB%9E%9C%EB%93%9C/brands)
+  - `Application level 의 2차 캐시 (ehcache) 적용.`
   - API
     ```text
     api endpoint : /v1/products/brands/lowest-price (GET)
@@ -378,6 +382,7 @@ cd claim
     ```
 
 - **구현 3)** [카테고리 이름으로 최저, 최고 가격 브랜드와 상품 가격을 조회하는 API](http://localhost:8080/swagger-ui/index.html#/%EC%83%81%ED%92%88%20-%20%EC%B9%B4%ED%85%8C%EA%B3%A0%EB%A6%AC/getCategory)
+  - `Application level 의 2차 캐시 (ehcache) 적용.`
   - API
     ```text
     api endpoint : /v1/products/categories/{category}/price-range/brands (GET)
@@ -426,6 +431,7 @@ cd claim
   - [브랜드 및 상품 추가 API](http://localhost:8080/swagger-ui/index.html#/%EC%83%81%ED%92%88%20-%20%EB%B8%8C%EB%9E%9C%EB%93%9C/createCategory)
   - [브랜드 및 상품 수정 API](http://localhost:8080/swagger-ui/index.html#/%EC%83%81%ED%92%88%20-%20%EB%B8%8C%EB%9E%9C%EB%93%9C/updateCategory)
   - [브랜드 및 상품 삭제 API](http://localhost:8080/swagger-ui/index.html#/%EC%83%81%ED%92%88%20-%20%EB%B8%8C%EB%9E%9C%EB%93%9C/deleteCategory)
+    - `Application level 의 2차 캐시 (ehcache) 초기화.`
     - API
       ```text
       api endpoint : /v1/products/brands
