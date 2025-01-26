@@ -1,3 +1,14 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+
+  servlet:
+    context-path:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 spring:
   application:
     name: claim

@@ -481,5 +481,5 @@ cd claim
 - Swagger : [swagger 바로가기](http://localhost:8080/swagger-ui/index.html)
 - JUnit
 ```bash
-  ./gradlew test
+  ./gradlew test --info
 ```
