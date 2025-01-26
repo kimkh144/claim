@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,7 +95,10 @@ public class BrandCategoryService {
         return new BrandLowestPriceResultDto(brandLowestPriceDtos, totalPrice);
     }
 
+
     /* 단일 브랜드로 모든 카테고리 상품을 구매할 때 최저가격에 판매하는 브랜드와 카테고리의 상품가격, 총액을 조회 */
+
+	@Cacheable(cacheNames = "lowestPriceProductsByBrand")
     public LowestPriceBrandDto getLowestPriceProductsByBrand() {
         /* 최저가 단일 브랜드 정보 조회 */
         List<BrandCategoryEntity> brandCategoryEntities = brandCategoryRepository.findLowestPriceBrand();

@@ -2,6 +2,9 @@ spring:
   application:
     name: claim
 
+  cache:
+    type: jcache
+
   h2:
     console:
       enabled: true
@@ -13,6 +16,23 @@ spring:
     hibernate:
       ddl-auto: create-drop
     defer-datasource-initialization: true
+
+    properties:
+      hibernate:
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: rg.hibernate.cache.ehcache.EhCacheRegionFactory
+        format_sql: true
+        show-sql: true
+
+      javax:
+        cache:
+          provider: org.ehcache.jsr107.EhcacheCachingProvider
+        persistence:
+          sharedCache:
+            mode: ALL
 
   sql:
     init:
@@ -30,3 +50,10 @@ springdoc:
     operations-sorter: alpha
   api-docs:
     path: /v3/api-docs
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace
+    org.springframework.cache: DEBUG
+    net.sf.ehcache: DEBUG
