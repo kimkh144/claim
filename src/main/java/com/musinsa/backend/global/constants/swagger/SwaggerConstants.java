@@ -1,7 +1,7 @@
 package com.musinsa.backend.global.constants.swagger;
 
 /**
- * Created by kimkh on 2024. 11. 1..
+ * Created by kimkh
  */
 public class SwaggerConstants {
 

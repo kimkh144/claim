@@ -8,7 +8,7 @@ import com.musinsa.backend.domain.product.dto.CategoryPriceLowestAndHighestDto;
 import com.musinsa.backend.domain.product.entity.BrandCategoryEntity;
 
 /**
- * Created by kimkh on 2024. 10. 29..
+ * Created by kimkh
  */
 @Repository
 public interface BrandCategoryRepositoryCustom {

@@ -1,5 +1,7 @@
 package com.musinsa.backend.domain.product.dto;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,14 +14,17 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by kimkh on 10/30/24.
+ * Created by kimkh
  */
 
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(title = "상품 최저가 정보")
-public class LowestPriceBrandCategoryDto {
+public class LowestPriceBrandCategoryDto implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	@Schema(title = "브랜드", example = "A")
 	@JsonProperty("브랜드")
 	private String brand;

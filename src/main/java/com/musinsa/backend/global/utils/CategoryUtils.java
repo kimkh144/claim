@@ -3,7 +3,7 @@ package com.musinsa.backend.global.utils;
 import java.util.List;
 
 /**
- * Created by kimkh on 2024. 10. 31..
+ * Created by kimkh
  */
 public class CategoryUtils {
 	private CategoryUtils() {

@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Created by kimkh on 2024. 10. 29..
+ * Created by kimkh
  */
 @Tag(name = SwaggerConstants.Brand.BRAND_TAG)
 @RequestMapping(value = SwaggerConstants.Brand.BRAND_V1)
@@ -46,7 +46,7 @@ public class BrandController {
         })
     })
     @GetMapping(value = SwaggerConstants.Brand.BRAND_API_V1_URL)
-    public Object brands() {
+    public BasicResponseDTO<?> brands() {
         return BasicResponseDTO.builder()
             .data(brandCategoryService.getLowestPriceProductsByBrand())
             .build();
@@ -87,7 +87,7 @@ public class BrandController {
     })
 
     @PutMapping(value = SwaggerConstants.Brand.BRAND_API_V4_URL)
-    public Object updateCategory(
+    public BasicResponseDTO<?> updateCategory(
         @RequestBody @Valid RequestBrandCategoryDto requestBrandCategoryDto
     ) {
         brandCategoryService.updateBrand(requestBrandCategoryDto);
@@ -112,4 +112,5 @@ public class BrandController {
         brandCategoryService.deleteBrand(requestBrandCategoryDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }

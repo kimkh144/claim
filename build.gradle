@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.5'
+    id 'org.springframework.boot' version '3.2.6'
     id 'io.spring.dependency-management' version '1.1.6'
     id "io.freefair.lombok" version "8.1.0" // lombok 플러스인 추가
 }
@@ -33,6 +33,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     compileOnly 'jakarta.servlet:jakarta.servlet-api:5.0.0' // 서블릿 API 추가
+
+    implementation 'javax.cache:cache-api:1.1.1'
+    implementation 'org.ehcache:ehcache:3.10.8'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.3'
+
 }
 
 tasks.named('test') {

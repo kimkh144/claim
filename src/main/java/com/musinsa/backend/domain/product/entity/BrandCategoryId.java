@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by kimkh on 2024. 10. 31..
+ * Created by kimkh
  */
 @Getter
 @NoArgsConstructor

@@ -1,5 +1,7 @@
 package com.musinsa.backend.global.common.response;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.musinsa.backend.global.enums.ErrorCode;
 
@@ -12,7 +14,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class BasicResponseDTO<T> {
+public class BasicResponseDTO<T> implements Serializable {
 
     @Schema(title = "pagination", description = "메타정보")
     public T meta;
@@ -32,7 +34,7 @@ public class BasicResponseDTO<T> {
     @Schema(title = "공통응답 - 에러 정보")
     @AllArgsConstructor
     @Getter
-    public static class BasicResponseError {
+    public static class BasicResponseError implements Serializable{
 
         @Schema(description = "status 코드")
         private Integer code;
