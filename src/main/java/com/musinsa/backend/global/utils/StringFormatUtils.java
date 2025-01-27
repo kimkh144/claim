@@ -4,7 +4,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
- * Created by kimkh on 10/30/24.
+ * Created by kimkh
  */
 public class StringFormatUtils {
 

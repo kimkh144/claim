@@ -14,7 +14,7 @@ import com.musinsa.backend.domain.product.entity.BrandCategoryId;
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Created by kimkh on 2024. 10. 29..
+ * Created by kimkh
  */
 @Repository
 public interface BrandCategoryRepository extends JpaRepository<BrandCategoryEntity, BrandCategoryId>,

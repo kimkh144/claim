@@ -1,5 +1,8 @@
 package com.musinsa.backend.global.common.response;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,13 +11,16 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by kimkh on 2024. 5. 21..
+ * Created by kimkh
  */
 @Schema(title = "페이지 정보")
 @AllArgsConstructor
 @Getter
 @Builder
-public class ResponsePaginationDTO {
+public class ResponsePaginationDTO implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	@Schema(description = "전체 아이템수")
 	private int totalCount;
 

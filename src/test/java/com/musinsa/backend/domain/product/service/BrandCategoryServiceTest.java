@@ -24,7 +24,7 @@ import com.musinsa.backend.domain.product.repository.BrandCategoryRepository;
 import com.musinsa.backend.global.common.exception.ServiceException;
 
 /**
- * Created by kimkh on 2024. 11. 1..
+ * Created by kimkh
  */
 public class BrandCategoryServiceTest {
 

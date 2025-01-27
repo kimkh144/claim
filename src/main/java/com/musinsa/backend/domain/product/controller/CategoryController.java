@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Created by kimkh on 2024. 10. 29..
+ * Created by kimkh
  */
 @Tag(name = SwaggerConstants.Category.CATEGORY_TAG)
 @RequestMapping(value = SwaggerConstants.Category.CATEGORY_V1)

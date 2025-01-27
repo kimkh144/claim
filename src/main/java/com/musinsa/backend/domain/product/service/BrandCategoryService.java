@@ -1,15 +1,22 @@
 package com.musinsa.backend.domain.product.service;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.View;
 
 import com.musinsa.backend.domain.product.repository.BrandCategoryRepository;
+import com.musinsa.backend.global.aop.ClearCache;
 import com.musinsa.backend.global.enums.ErrorCode;
 import com.musinsa.backend.global.common.exception.ServiceException;
 import com.musinsa.backend.global.utils.CategoryUtils;
@@ -26,16 +33,16 @@ import com.musinsa.backend.domain.product.entity.BrandCategoryId;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Created by kimkh on 2024. 10. 29..
+ * Created by kimkh
  */
 @Service
 @RequiredArgsConstructor
 public class BrandCategoryService {
     private final BrandCategoryRepository brandCategoryRepository;
-    private final View error;
 
     /* 브랜드 상품 등록 */
     @Transactional
+    @ClearCache({"lowestPriceProductsByBrand", "categoryPriceLowestAndHighest", "lowestPriceProductsByCategory"})
     public void createBrand(RequestBrandCategoryDto requestBrandCategoryDto) {
         /* 브랜드 카테고리 조회 및 유효성 검사 */
         Optional<BrandCategoryEntity> brandCategoryEntity = brandCategoryRepository.findByIdBrandAndIdCategory(
@@ -54,8 +61,10 @@ public class BrandCategoryService {
         brandCategoryRepository.save(createBrandCategoryEntity);
     }
 
+
     /* 브랜드 상품 수정 */
     @Transactional
+    @ClearCache({"lowestPriceProductsByBrand", "categoryPriceLowestAndHighest", "lowestPriceProductsByCategory"})
     public void updateBrand(RequestBrandCategoryDto requestBrandCategoryDto) {
         /* 브랜드, 카테고리 조회 */
         BrandCategoryEntity brandCategoryEntity = getBrandCategory(requestBrandCategoryDto);
@@ -68,6 +77,7 @@ public class BrandCategoryService {
 
     /* 브랜드 상품 삭제 */
     @Transactional
+    @ClearCache({"lowestPriceProductsByBrand", "categoryPriceLowestAndHighest", "lowestPriceProductsByCategory"})
     public void deleteBrand(RequestBrandCategoryDto requestBrandCategoryDto) {
         /* 브랜드, 카테고리 조회 */
         BrandCategoryEntity brandCategoryEntity = getBrandCategory(requestBrandCategoryDto);
@@ -76,6 +86,7 @@ public class BrandCategoryService {
     }
 
     /* 카테고리 별 최저 가격 브랜드와 상품 가격, 총액을 조회  */
+    @Cacheable(value = "lowestPriceProductsByCategory", unless = "#result == null")
     public BrandLowestPriceResultDto getLowestPriceProductsByCategory() {
         /* 카테고리 별 최저가 브랜드 조회 */
         List<BrandCategoryEntity> brandCategoryEntities = brandCategoryRepository.findLowestPriceProductsByCategory();
@@ -93,6 +104,7 @@ public class BrandCategoryService {
         return new BrandLowestPriceResultDto(brandLowestPriceDtos, totalPrice);
     }
 
+    @Cacheable(value = "lowestPriceProductsByBrand", unless = "#result == null")
     /* 단일 브랜드로 모든 카테고리 상품을 구매할 때 최저가격에 판매하는 브랜드와 카테고리의 상품가격, 총액을 조회 */
     public LowestPriceBrandDto getLowestPriceProductsByBrand() {
         /* 최저가 단일 브랜드 정보 조회 */
@@ -118,6 +130,7 @@ public class BrandCategoryService {
     }
 
     /* 카테고리 이름으로 최저, 최고 가격 브랜드와 상품 가격을 조회 */
+    @Cacheable(value = "categoryPriceLowestAndHighest", unless = "#result == null")
     public CategoryPriceLowestAndHighestDto getCategoryPriceLowestAndHighest(String categoryName) {
         /* 유효성 검증 */
         if (!CategoryUtils.isValidCategory(categoryName)) {

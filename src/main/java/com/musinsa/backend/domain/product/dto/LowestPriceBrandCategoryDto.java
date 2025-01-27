@@ -10,16 +10,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
- * Created by kimkh on 10/30/24.
+ * Created by kimkh
  */
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(title = "상품 최저가 정보")
 public class LowestPriceBrandCategoryDto {
+
 	@Schema(title = "브랜드", example = "A")
 	@JsonProperty("브랜드")
 	private String brand;
