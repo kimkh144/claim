@@ -1,7 +1,18 @@
 # Back-end 과제
-- 이 프로젝트는 `Spring Boot(3.3.5)` 와 `H2 Database`를 사용하여 무신사 과제에서 요구하는 기능을 구현한 `Application` 입니다.
+- 이 프로젝트는 `Spring Boot(3.2.6)` 와 `H2 Database`를 사용하여 무신사 과제에서 요구하는 기능을 구현한 `Application` 입니다.
   <br>
   <br>
+---
+
+## 주요 기능
+### - 과제에서 정의 된 REST API 기능 구현.
+- Junit test 로 api level 에서 성공 케이스 테스트 시험.
+### - 빈번하게 사용되는 조회 기능은 2차 캐시 저장소 사용.
+- Application level 에서 ehcache 저장소를 사용하여 응답 속도 개선.
+- 원천 데이터 변경 사항 발생시 cache 저장소 clear.
+### - 서버 기동시 startWarmup 으로 서비스에서 사용되는 2차 캐시 저장소 및 cold start 이슈 개선.
+  <br>
+
 ---
 
 ## 브랜치 전략
@@ -25,17 +36,6 @@
 - **H2 Database** (임베디드 메모리)
   <br>
   <br>
----
-
-## 주요 기능
-### - 과제에서 정의 된 REST API 기능 구현.
-  - Junit test 로 api level 에서 성공 케이스 테스트 시험. 
-### - 빈번하게 사용되는 조회 기능은 2차 캐시 저장소 사용.
-  - Application level 에서 ehcache 저장소를 사용하여 응답 속도 개선.
-  - 원천 데이터 변경 사항 발생시 cache 저장소 clear.
-### - 서버 기동시 startWarmup 으로 서비스에서 사용되는 2차 캐시 저장소 및 cold start 이슈 개선.
-  <br>
-
 ---
 
 ## 실행 방법
