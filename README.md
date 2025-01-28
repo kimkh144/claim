@@ -269,7 +269,7 @@ cd claim
                     "price": "3,000"
                },
                {
-                    "brand": "A",
+                    "brand": "G",
                     "category": "스니커즈",
                     "price": "9,000"
                },

@@ -101,7 +101,7 @@ class CategoryControllerTest {
             "상의", new String[] {"C", "10,000"},
             "아우터", new String[] {"E", "5,000"},
             "바지", new String[] {"D", "3,000"},
-            "스니커즈", new String[] {"A", "9,000"},
+            "스니커즈", new String[] {"G", "9,000"},
             "가방", new String[] {"A", "2,000"},
             "모자", new String[] {"D", "1,500"},
             "양말", new String[] {"I", "1,700"},
