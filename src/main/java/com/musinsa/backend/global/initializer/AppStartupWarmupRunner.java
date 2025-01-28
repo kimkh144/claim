@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.musinsa.backend.domain.product.service.BrandCategoryService;
+import com.musinsa.backend.global.utils.CategoryUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +23,10 @@ public class AppStartupWarmupRunner implements CommandLineRunner {
     /* 캐시 데이터 로드 작업 */
     private void warmupCache() {
         logger.info("캐시 데이터 준비 중.");
-        brandCategoryService.getCategoryPriceLowestAndHighest("상의");
+
+        CategoryUtils.VALID_CATEGORIES
+            .forEach(brandCategoryService::getCategoryPriceLowestAndHighest);
+
         brandCategoryService.getLowestPriceProductsByBrand();
         brandCategoryService.getLowestPriceProductsByCategory();
         logger.info("캐시 데이터 준비 완료.");
