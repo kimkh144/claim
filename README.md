@@ -26,6 +26,18 @@
   <br>
   <br>
 ---
+
+## 주요 기능
+### - 과제에서 정의 된 REST API 기능 구현.
+  - Junit test 로 api level 에서 성공 케이스 테스트 시험. 
+### - 빈번하게 사용되는 조회 기능은 2차 캐시 저장소 사용.
+  - Application level 에서 ehcache 저장소를 사용하여 응답 속도 개선.
+  - 원천 데이터 변경 사항 발생시 cache 저장소 clear.
+### - 서버 기동시 startWarmup 으로 서비스에서 사용되는 2차 캐시 저장소 및 cold start 이슈 개선.
+  <br>
+
+---
+
 ## 실행 방법
 ### 0. JDK 설치
 JDK : [Amazon Corretto 17 다운로드](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
@@ -92,6 +104,7 @@ cd claim
   │                   │   │   └── ServiceException.java
   │                   │   └── response                     # common response model 관리 
   │                   ├── config                           # spring 설정 클래스
+  │                   ├── initializer                      # 초기화 (Warmup) 및 Runner 관련 클래스
   │                   ├── constants                        # 상수 관리
   │                   └── utils                            # 유틸 관리
   └── resources
