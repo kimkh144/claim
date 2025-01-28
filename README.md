@@ -17,10 +17,11 @@
 
 ## Project 스펙
 - Java : [Corretto 17](https://aws.amazon.com/ko/about-aws/whats-new/2021/09/amazon-corretto-17-now-available/)
-- Spring Boot : **[3.3.5](https://spring.io/projects/spring-boot#support)**
-- Spring Framework: 6.1.14
-  - Apache Tomcat/10.1.31
-- Gradle : 8.10.2
+  - Spring Data JPA, QueryDsl
+- Spring Boot : **[3.2.6](https://spring.io/projects/spring-boot#support)**
+- Spring Framework: 6.1
+  - Apache Tomcat/10.1.24
+- Gradle : 8.8
 - **H2 Database** (임베디드 메모리)
   <br>
   <br>
